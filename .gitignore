@@ -1,34 +1,94 @@
-# Root-level node_modules (if any)
-node_modules/
-
 # Logs
 logs/
 *.log
 npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+lerna-debug.log*
+.pnpm-debug.log*
 
-# OS/System files
-.DS_Store
-Thumbs.db
+# Diagnostic reports
+report.[0-9]*.[0-9]*.[0-9]*.[0-9]*.json
 
-# Environment variables
-.env
+# Runtime data
+pids
+*.pid
+*.seed
+*.pid.lock
+
+# Directory for instrumented libs
+lib-cov
+
+# Coverage
+coverage/
+.nyc_output
+*.lcov
+
+# Grunt, Bower
+.grunt
+bower_components
+
+# Node modules
+node_modules/
+client/node_modules/
+server/node_modules/
 
 # Vite cache
 client/.vite/
 
-# Client build output
+# Build outputs
 client/dist/
-
-# Node modules inside client and server
-client/node_modules/
-server/node_modules/
-
-# Server build (if using TypeScript or Babel)
-server/dist/
 server/build/
+server/dist/
 
-# Optional: VSCode config
+# TypeScript cache
+*.tsbuildinfo
+
+# Babel or other cache
+.cache
+.parcel-cache
+.webpack/
+
+# Misc caches
+.npm
+.eslintcache
+.stylelintcache
+.rpt2_cache/
+.rts2_cache_*/
+
+# Env files
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# System files
+.DS_Store
+Thumbs.db
+
+# IDE settings
 .vscode/
 
-# Coverage reports
-coverage/
+# Others
+.yarn-integrity
+.node_repl_history
+*.tgz
+.yarn/cache
+.yarn/unplugged
+.yarn/build-state.yml
+.yarn/install-state.gz
+.pnp.*
+
+# Framework specific
+.next
+out
+.nuxt
+.vuepress/dist
+.temp
+.docusaurus
+.serverless/
+.fusebox/
+.dynamodb/
+.tern-port
+.vscode-test
