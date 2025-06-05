@@ -6,6 +6,7 @@ const db = mongojs("mongodb://127.0.0.1:27017/travel", ["records"]);
 
 const bodyParser = require("body-parser");
 const qs = require("qs");
+const { body, param, validationResult } = require("express-validator");
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
@@ -59,6 +60,38 @@ app.get("/api/records", (req, res) => {
       });
   });
 });
+
+app.post(
+  "/api/records",
+  [
+    body("traveler").not().isEmpty(),
+    body("destination").not().isEmpty(),
+    body("date").not().isEmpty(),
+  ],
+  function (req, res) {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ errors: errors.array() });
+    }
+    db.records.insert(
+      {
+        traveler: req.body.traveler,
+        destination: req.body.destination,
+        date: req.body.date,
+        duration: req.body.duration,
+        transport: req.body.transport,
+      },
+      function (err, data) {
+        if (err) {
+          return res.status(500);
+        }
+        const _id = data._id;
+        res.append("Location", "/api/records/" + _id);
+        return res.status(201).json({ meta: { _id }, data });
+      }
+    );
+  }
+);
 
 app.listen(8000, () => {
   console.log("Server running at port 8000...");
