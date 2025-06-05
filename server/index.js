@@ -11,6 +11,8 @@ const { body, param, validationResult } = require("express-validator");
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 
+//_________________________________________________________
+
 app.get("/api/records", (req, res) => {
   const options = qs.parse(req.query);
   const sort = options.sort || {};
@@ -61,6 +63,8 @@ app.get("/api/records", (req, res) => {
   });
 });
 
+//___________________________________________________________________
+
 app.post(
   "/api/records",
   [
@@ -92,6 +96,104 @@ app.post(
     );
   }
 );
+
+//____________________________________________________________________
+
+app.put("/api/records/:id", [param("id").isMongoId()], function (req, res) {
+  const _id = req.params.id;
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(400).json({ errors: errors.array() });
+  }
+  db.records.count(
+    {
+      _id: mongojs.ObjectId(_id),
+    },
+    function (err, count) {
+      if (count) {
+        const record = {
+          _id: mongojs.ObjectId(_id),
+          ...req.body,
+        };
+        db.records.save(record, function (err, data) {
+          return res.status(200).json({
+            meta: { _id },
+            data,
+          });
+        });
+      } else {
+        db.records.save(req.body, function (err, data) {
+          return res.status(201).json({
+            meta: { _id: data._id },
+            data,
+          });
+        });
+      }
+    }
+  );
+});
+
+//______________________________________________________
+
+app.patch("/api/records/:id", function (req, res) {
+  const _id = req.params.id;
+  db.records.count(
+    {
+      _id: mongojs.ObjectId(_id),
+    },
+    function (err, count) {
+      if (count) {
+        db.records.update(
+          { _id: mongojs.ObjectId(_id) },
+          { $set: req.body },
+          { multi: false },
+          function (err, data) {
+            db.records.find(
+              {
+                _id: mongojs.ObjectId(_id),
+              },
+              function (err, data) {
+                return res.status(200).json({
+                  meta: { _id },
+                  data,
+                });
+              }
+            );
+          }
+        );
+      } else {
+        return res.sendStatus(404);
+      }
+    }
+  );
+});
+
+//_______________________________________________________
+
+app.delete("/api/records/:id", function (req, res) {
+  const _id = req.params.id;
+  db.records.count(
+    {
+      _id: mongojs.ObjectId(_id),
+    },
+    function (err, count) {
+      if (count) {
+        db.records.remove(
+          {
+            _id: mongojs.ObjectId(_id),
+          },
+          function (err, data) {
+            return res.sendStatus(204);
+          }
+        );
+      } else {
+        return res.sendStatus(404);
+      }
+    }
+  );
+});
+
+//_______________________________________________________
 
 app.listen(8000, () => {
   console.log("Server running at port 8000...");
