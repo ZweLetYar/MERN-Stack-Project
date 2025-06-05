@@ -1,0 +1,27 @@
+{
+  "name": "mern-stack-project",
+  "version": "1.0.0",
+  "description": "A full-stack web application built using the **MERN** stack (MongoDB, Express, React + Vite, Node.js).",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "client": "cd client && npm run dev",
+    "server": "cd server && nodemon index",
+    "app": "concurrently \"npm run server\" \"npm run client\""
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ZweLetYar/MERN-Stack-Project.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/ZweLetYar/MERN-Stack-Project/issues"
+  },
+  "homepage": "https://github.com/ZweLetYar/MERN-Stack-Project#readme",
+  "devDependencies": {
+    "concurrently": "^9.1.2"
+  }
+}
