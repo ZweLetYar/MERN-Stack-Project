@@ -8,7 +8,7 @@ function useFetch(url, method = "GET") {
 
   let deleteDocument = async (id) => {
     try {
-      const res = await fetch(url + "/" + id, {
+      const res = await fetch(`${url}/${id}`, {
         method: "DELETE",
       });
       if (res.ok) {
@@ -18,6 +18,33 @@ function useFetch(url, method = "GET") {
       }
     } catch (err) {
       console.error("Error deleting document", err);
+    }
+  };
+
+  let updateDocument = async (id, updatedData) => {
+    try {
+      const res = await fetch(`${url}/${id}`, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(updatedData),
+      });
+
+      if (res.ok) {
+        const updated = await res.json();
+        // Update the local data without reloading
+        setData((prev) => ({
+          ...prev,
+          data: prev.data.map((item) =>
+            item._id === id ? { ...item, ...updated } : item
+          ),
+        }));
+      } else {
+        console.error("Failed to patch document");
+      }
+    } catch (err) {
+      console.error("Error patching document", err);
     }
   };
 
@@ -67,7 +94,7 @@ function useFetch(url, method = "GET") {
     //   abortController.abort();
     // };
   }, [url, postData]);
-  return { setPostData, deleteDocument, data, loading, error };
+  return { setPostData, deleteDocument, updateDocument, data, loading, error };
 }
 
 export default useFetch;

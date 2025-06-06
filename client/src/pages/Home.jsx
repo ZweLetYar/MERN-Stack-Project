@@ -51,14 +51,22 @@ export default function Home() {
                 <span className="flex-1">: {t.transport}</span>
               </li>
             </ul>
-            <button
-              className="bg-red-500 rounded-xl px-4 py-2 text-white mt-2 ml-auto cursor-pointer text-center"
-              onClick={() => {
-                deleteDocument(t._id);
-              }}
-            >
-              Delete
-            </button>
+            <div className="ml-auto flex gap-2">
+              <button
+                className="bg-blue-500 rounded-xl w-20 py-2 text-white mt-2  cursor-pointer text-center"
+                onClick={() => navigate(`/edit/${t._id}`)}
+              >
+                Edit
+              </button>
+              <button
+                className="bg-red-500 rounded-xl w-20 py-2 text-white mt-2  cursor-pointer text-center"
+                onClick={() => {
+                  deleteDocument(t._id);
+                }}
+              >
+                Delete
+              </button>
+            </div>
           </div>
         ))}
       </div>

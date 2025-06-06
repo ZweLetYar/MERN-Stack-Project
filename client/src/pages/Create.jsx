@@ -1,9 +1,14 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import useFetch from "../hooks/useFetch";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 
 export default function Create() {
-  let { setPostData } = useFetch("http://localhost:8000/api/records", "POST");
+  let [url, setUrl] = useState("http://localhost:8000/api/records");
+  let { setPostData, updateDocument } = useFetch(url, "POST");
+
+  let { id } = useParams();
+
+  let { data } = useFetch(`http://localhost:8000/api/records/${id}`);
 
   let [traveler, setTraveler] = useState("");
   let [destination, setDestionation] = useState("");
@@ -12,6 +17,16 @@ export default function Create() {
   let [transport, setTransport] = useState("");
 
   let navigate = useNavigate();
+
+  useEffect(() => {
+    if (id && data) {
+      setTraveler(data.traveler || "");
+      setDestionation(data.destination || "");
+      setDate(data.date || "");
+      setDuration(data.duration || "");
+      setTransport(data.transport || "");
+    }
+  }, [id, data]);
 
   let AddTraveler = (e) => {
     e.preventDefault();
@@ -22,7 +37,12 @@ export default function Create() {
       duration,
       transport,
     };
-    setPostData(travelerData);
+    if (id) {
+      updateDocument(id, travelerData);
+    } else {
+      setPostData(travelerData);
+    }
+
     setTraveler("");
     setDestionation("");
     setDate("");
@@ -37,7 +57,9 @@ export default function Create() {
         onSubmit={AddTraveler}
         className="bg-white p-8 rounded-xl shadow-md w-full max-w-md space-y-4"
       >
-        <h2 className="text-2xl font-bold text-center mb-4">Add Traveler</h2>
+        <h2 className="text-2xl font-bold text-center mb-4">
+          {id ? "Edit" : "Add"} Traveler
+        </h2>
 
         <input
           type="text"
@@ -83,7 +105,7 @@ export default function Create() {
           type="submit"
           className="w-full bg-green-600 text-white py-3 rounded-md hover:bg-green-700 transition"
         >
-          Add Traveler
+          {id ? "Edit" : "Add"} Traveler
         </button>
       </form>
     </div>

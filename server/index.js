@@ -283,6 +283,19 @@ app.get("/api/records", async (req, res) => {
   }
 });
 
+// GET a single record by ID
+app.get("/api/records/:id", async (req, res) => {
+  try {
+    const record = await Record.findById(req.params.id);
+    if (!record) {
+      return res.status(404).json({ message: "Record not found" });
+    }
+    return res.status(200).json(record);
+  } catch (err) {
+    return res.status(500).json({ message: "Server error" });
+  }
+});
+
 // POST a new record
 app.post(
   "/api/records",
