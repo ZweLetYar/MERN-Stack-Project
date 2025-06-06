@@ -251,7 +251,7 @@ app.get("/api/records", async (req, res) => {
     const options = qs.parse(req.query);
     const sort = options.sort || {};
     const filter = options.filter || {};
-    const limit = 4;
+    const limit = 10;
     const page = parseInt(options.page) || 1;
     const skip = (page - 1) * limit;
 
