@@ -2,7 +2,9 @@ import { useNavigate } from "react-router-dom";
 import useFetch from "../hooks/useFetch";
 
 export default function Home() {
-  const { data } = useFetch("http://localhost:8000/api/records");
+  const { data, deleteDocument } = useFetch(
+    "http://localhost:8000/api/records"
+  );
   const travelers = data?.data || [];
   const navigate = useNavigate();
 
@@ -24,7 +26,7 @@ export default function Home() {
       <div className="w-full max-w-8xl flex flex-wrap  gap-5 justify-center">
         {travelers?.map((t) => (
           <div
-            className="w-full sm:w-[45%] md:w-[30%] lg:w-[23%] bg-white p-4 rounded-xl shadow-md"
+            className="w-full sm:w-[45%] md:w-[30%] lg:w-[23%] bg-white p-4 rounded-xl shadow-md flex flex-col"
             key={t._id}
           >
             <ul className="space-y-2">
@@ -49,6 +51,14 @@ export default function Home() {
                 <span className="flex-1">: {t.transport}</span>
               </li>
             </ul>
+            <button
+              className="bg-red-500 rounded-xl px-4 py-2 text-white mt-2 ml-auto cursor-pointer text-center"
+              onClick={() => {
+                deleteDocument(t._id);
+              }}
+            >
+              Delete
+            </button>
           </div>
         ))}
       </div>

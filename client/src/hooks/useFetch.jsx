@@ -6,6 +6,21 @@ function useFetch(url, method = "GET") {
   let [loading, setLoading] = useState(false);
   let [error, setError] = useState(null);
 
+  let deleteDocument = async (id) => {
+    try {
+      const res = await fetch(url + "/" + id, {
+        method: "DELETE",
+      });
+      if (res.ok) {
+        window.location.reload(); // or better: re-fetch the data without reload
+      } else {
+        console.error("Failed to delete document");
+      }
+    } catch (err) {
+      console.error("Error deleting document", err);
+    }
+  };
+
   useEffect(() => {
     let abortController = new AbortController();
     let signal = abortController.signal;
@@ -52,7 +67,7 @@ function useFetch(url, method = "GET") {
     //   abortController.abort();
     // };
   }, [url, postData]);
-  return { setPostData, data, loading, error };
+  return { setPostData, deleteDocument, data, loading, error };
 }
 
 export default useFetch;
