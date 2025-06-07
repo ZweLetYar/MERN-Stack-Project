@@ -251,30 +251,40 @@ app.get("/api/records", async (req, res) => {
     const options = qs.parse(req.query);
     const sort = options.sort || {};
     const filter = options.filter || {};
-    const limit = 10;
+    const limit = 4;
     const page = parseInt(options.page) || 1;
     const skip = (page - 1) * limit;
 
     for (let i in sort) sort[i] = parseInt(sort[i]);
 
+    const totalDocuments = await Record.countDocuments();
+
     const totalCount = await Record.countDocuments(filter);
     const data = await Record.find(filter).sort(sort).skip(skip).limit(limit);
 
     const totalPages = Math.ceil(totalCount / limit);
-    const queryString = qs.stringify({ sort, filter }, { encode: false });
-    const baseUrl = `/api/records?${queryString}`;
+    // const queryString = qs.stringify({ sort, filter }, { encode: false });
+    // const baseUrl = `http://localhost:8000/api/records?${queryString}`;
 
     const links = {
-      self: `${baseUrl}&page=${page}`,
-      first: `${baseUrl}&page=1`,
-      last: `${baseUrl}&page=${totalPages}`,
+      self: `${page}`,
+      first: "1",
+      last: `${totalPages}`,
     };
 
-    if (page > 1) links.prev = `${baseUrl}&page=${page - 1}`;
-    if (page < totalPages) links.next = `${baseUrl}&page=${page + 1}`;
+    if (page > 1) links.prev = `${page - 1}`;
+    if (page < totalPages) links.next = `${page + 1}`;
 
     return res.status(200).json({
-      meta: { total: data.length, skip, limit, filter, sort, page },
+      meta: {
+        total: data.length,
+        totalDocuments,
+        skip,
+        limit,
+        filter,
+        sort,
+        page,
+      },
       data,
       links,
     });

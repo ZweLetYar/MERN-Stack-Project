@@ -1,10 +1,19 @@
 import { useNavigate } from "react-router-dom";
 import useFetch from "../hooks/useFetch";
+import { useEffect, useState } from "react";
 
 export default function Home() {
-  const { data, deleteDocument } = useFetch(
-    "http://localhost:8000/api/records"
+  const [page, setPage] = useState(1);
+  const [url, setUrl] = useState(
+    "http://localhost:8000/api/records?sort[date]=-1&page=1"
   );
+
+  useEffect(() => {
+    setUrl(`http://localhost:8000/api/records?sort[date]=-1&page=${page}`);
+  }, [page]);
+
+  const { data, deleteDocument } = useFetch(url);
+
   const travelers = data?.data || [];
   const navigate = useNavigate();
 
@@ -69,6 +78,65 @@ export default function Home() {
             </div>
           </div>
         ))}
+      </div>
+      <div className="text-white font-bold underline ">Page:{page}</div>
+      <div className="flex ">
+        <button
+          className=" text-white w-10 h-10 flex items-center justify-center cursor-pointer bg-blue-600 rounded-lg border border-white"
+          onClick={() => {
+            setPage(data?.links.prev);
+          }}
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            strokeWidth={1.5}
+            stroke="currentColor"
+            className="size-6"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              d="m18.75 4.5-7.5 7.5 7.5 7.5m-6-15L5.25 12l7.5 7.5"
+            />
+          </svg>
+        </button>
+        {Array.from(
+          { length: Math.ceil(data?.meta.totalDocuments / data?.meta.limit) },
+          (_, i) => (
+            <button
+              key={i}
+              className=" text-white w-10 h-10 cursor-pointer bg-blue-600 rounded-full border border-white"
+              onClick={() => {
+                setPage(i + 1);
+              }}
+            >
+              {i + 1}
+            </button>
+          )
+        )}
+        <button
+          className=" text-white w-10 h-10 flex items-center justify-center cursor-pointer bg-blue-600 rounded-lg border border-white"
+          onClick={() => {
+            setPage(data?.links.next);
+          }}
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            strokeWidth={1.5}
+            stroke="currentColor"
+            className="size-6"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              d="m5.25 4.5 7.5 7.5-7.5 7.5m6-15 7.5 7.5-7.5 7.5"
+            />
+          </svg>
+        </button>
       </div>
     </div>
   );
